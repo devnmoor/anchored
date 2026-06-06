@@ -26,6 +26,8 @@ def get_active_window_windows():
     except:
         return None
     
+
+
 while True:
     print(get_active_window())
     time.sleep(1)
@@ -33,5 +35,4 @@ while True:
 """
 platform.system
 Returns the system/OS name, such as 'Linux', 'Darwin', 'Java', 'Windows'. An empty string is returned if the value cannot be determined.
-
 """

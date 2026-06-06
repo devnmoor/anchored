@@ -2,24 +2,137 @@
 
 ## What You're Building
 
-A desktop app that:
-1. Lets you set a task and start a timer
-- Enter task, how long you need to spend
-2. Monitors which window you're in
-- Enter the main application
-- Expects that you stay in that application in full screen
-3. Alerts you if you've been away from your work window for 5+ minutes
-- When window inactive for more than 5 minutes, show full window alert/notification that says return to your work
-- It includes AI generated message that tells them something like "You only have 30 minutes until you need to send out emails, don't get distracted and complete this task."
-- Given two options: "Take a 5 minute break" or "Continue task"
-    - Taking a 5 minute break prevents you from taking a break the next time you are inactive for 5 minutes (but it resets after that next task)
-You can also lock your screen so you can't move around to other windows at all.
-4. Captures the screen at the moment of distraction
-- To get them back on track, it captures screen at the moment of distraction and also from right before they went away from the window
-- Every time they go away from the window, whether or not it was less than 5 minutes or over 5 minutes resulting in an alert, the app screenshots their last work, sometimes that screenshot is used and sometimes not if they went back to the window before 5 minutes.
-- So when they are distracted for over 5 minutes, the window tells them that right now they are "...." and 5 minutes ago they were "....", so they should continue the latter, ... (This message should be written very carefully and should be written in a way that poeople with ADHD, suddenly get motivated to go back to work, based on actual ADHD research and manipulation of the mind to change tasks...)
-5. Sends it to an LLM to generate a 2-sentence "here's what you were doing" re-orientation summary
-...
+A desktop app for people with ADHD that enforces focus, detects distraction, and uses AI to snap the user back on task — fast.
+
+### Core Features
+
+**1. Task + Timer Setup**
+- User enters: what they're working on, how long they need to spend on it
+- App uses the time remaining as context for all alert messages ("you only have 30 minutes left")
+
+**2. Window Monitoring**
+- User specifies the target application (e.g. VSCode, Google Docs)
+- App expects that application to stay in the foreground, full screen
+- Continuously tracks whether the target window is active
+
+**3. Continuous Screenshot Buffer**
+- Every time the user leaves the target window — even briefly — the app silently captures a screenshot of what they were last doing
+- This screenshot is stored in a rolling buffer: "last work state" and "5 minutes ago work state"
+- Most screenshots are never shown to the user; they're only surfaced if a distraction alert fires
+
+**4. Distraction Alert (5+ minutes away)**
+When the user has been away from their target window for more than 5 minutes, the app takes over with a full-screen modal alert. The alert includes:
+
+- An AI-generated re-orientation message that shows two states side by side:
+  - *Right now:* "You are currently watching a YouTube video about basketball"
+  - *5 minutes ago:* "You were editing slide 4 of your presentation, writing about Q3 revenue"
+  - A motivational closer grounded in ADHD psychology (see Messaging Guidelines below)
+
+- Two action buttons:
+  - **"Take a 5-minute break"** — grants one guilt-free break; this option is disabled for the remainder of the current task session after it's used once, resetting only when a new task is started
+  - **"Continue task"** — dismisses the alert and returns focus to the target window
+
+**5. Optional Focus Lock**
+- User can enable a hard lock mode that prevents switching away from the target window entirely
+- When active, any attempt to switch windows is immediately blocked or reversed
+
+### Messaging System (ADHD-Informed + Instrumented)
+
+The AI-generated alert message is the most important feature — and the most technically interesting if built right. The goal is not just to generate a message, but to learn over time which kinds of messages actually work for each user.
+
+#### Step 1: Define the metric
+
+The metric you care about is **return latency** — the number of seconds between the alert appearing and the user clicking "Continue task" and staying on the target window. Lower = better. Every alert that fires should log this.
+
+```python
+# When alert fires
+alert_start_time = time.time()
+
+# When user clicks "Continue task"
+return_latency = time.time() - alert_start_time
+log_session(prompt_style=current_style, return_latency=return_latency)
+```
+
+#### Step 2: Define prompt styles
+
+Rather than using one fixed prompt, define 3–4 distinct styles grounded in ADHD research. Each style emphasizes a different psychological lever:
+
+| Style | What it does | Example |
+|---|---|---|
+| `urgency` | Ties message to time remaining | "You have 22 minutes left. Don't lose them." |
+| `specificity` | Names exactly where they left off | "You were on slide 4, mid-sentence about revenue." |
+| `momentum` | Frames return as the satisfying move | "You were almost done with that section." |
+| `social` | References competitive session if active | "Your friend hasn't gone off-window once." |
+
+#### Step 3: A/B test across sessions
+
+Rotate through prompt styles and log which produces the lowest return latency. After 20–30 sessions you'll have real data.
+
+```python
+import random
+
+PROMPT_STYLES = ["urgency", "specificity", "momentum", "social"]
+
+def pick_prompt_style(user_history):
+    if len(user_history) < 12:
+        # Not enough data yet — rotate evenly
+        return PROMPT_STYLES[len(user_history) % len(PROMPT_STYLES)]
+    else:
+        # Enough data — weight toward the style with lowest avg return latency
+        avg_latency = {
+            style: sum(r["latency"] for r in user_history if r["style"] == style) /
+                   max(1, sum(1 for r in user_history if r["style"] == style))
+            for style in PROMPT_STYLES
+        }
+        return min(avg_latency, key=avg_latency.get)
+```
+
+#### Step 4: Build the prompt dynamically
+
+```python
+def build_prompt(style, task, time_remaining, current_screen_desc, last_work_desc):
+    base = f"The user is working on: '{task}'. They have {time_remaining} minutes left."
+    context = f"Right now: {current_screen_desc}. Five minutes ago: {last_work_desc}."
+
+    if style == "urgency":
+        instruction = "Write 2 sentences. Lead with the time remaining as a concrete number. Make it feel urgent but not panicked."
+    elif style == "specificity":
+        instruction = "Write 2 sentences. Be extremely specific about what they were doing — mention visible content, not just app names."
+    elif style == "momentum":
+        instruction = "Write 2 sentences. Frame returning to work as the satisfying next move. Imply they were close to finishing something."
+    elif style == "social":
+        instruction = "Write 2 sentences. Mention that others in their session are still focused. Make returning feel like the obvious choice."
+
+    return f"{base} {context} {instruction} Do not use guilt. Be direct and energizing."
+```
+
+#### Step 5: Log everything and report findings
+
+Every session, log: prompt style used, generated message, return latency, whether the user took a break or continued, and how long they stayed on task after returning.
+
+At the end of the summer, even 30–40 sessions of your own usage gives you something to write up:
+
+> *"Urgency framing reduced average return latency by 34% compared to momentum framing for distraction events over 7 minutes. Specificity framing performed best for shorter distraction events (5–7 min)."*
+
+That one sentence in your README or in an interview is the difference between "I called an API" and "I built an instrumented system, ran experiments, and measured outcomes."
+
+---
+
+## Additional Features
+
+**Reward System**
+- Users earn points for completing focus sessions without going off-window
+- Points accumulate into a high score the user tries to beat over time
+- Progress tracking surfaces improvement over days and weeks — a key motivator for ADHD users who respond well to visible momentum
+
+**Competitive Lock-In Sessions**
+- Two users can join a shared session and set the same time goal
+- At the end, both see a side-by-side breakdown of who was more "locked in" based on:
+  - Active typing, clicking, and scrolling
+  - Active editing (file saves, code changes, etc.)
+  - Number of times off-window and total off-window duration
+- The social accountability layer is deliberate — ADHD research consistently shows that body doubling (working alongside someone else) significantly improves focus. This is a digital version of that.
+
 ---
 
 ## Tech Stack
