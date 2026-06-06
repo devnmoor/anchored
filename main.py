@@ -24,14 +24,14 @@ def timer_loop():
             time_remaining = total - elapsed
             print(time_remaining)
             time.sleep(2)
-        elif state == AppState.DISTRACTED:
-            # count down distraction_timer
-        elif state == AppState.ALERT:
-            # count down alert_timer
-        elif state == AppState.BREAK:
-            # count down break_timer
-        else:
-            # do nothing
+        # elif state == AppState.DISTRACTED:
+        #     # count down distraction_timer
+        # elif state == AppState.ALERT:
+        #     # count down alert_timer
+        # elif state == AppState.BREAK:
+        #     # count down break_timer
+        # else:
+        #     # do nothing
 
 def get_active_window():
     os_system = platform.system()
