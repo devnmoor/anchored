@@ -26,8 +26,12 @@ def timer_loop():
             paused_time_remaining = time_remaining # Move to where we switch to DISTRACTED, not a bug, just messy
 timer_loop()
 
+# Without threading, if you just called timer_loop() directly, it would run the while True loop forever and the rest of your code below it would never execute.Threading lets timer_loop run in the background while your main program keeps going and does other things.
 t1 = threading.Thread(target = timer_loop, daemon = True)
+# target=timer_loop tells it which function to run.
+# daemon=True means it dies when the main program exits.
 t1.start()
+
 
 time.sleep(10)
 
