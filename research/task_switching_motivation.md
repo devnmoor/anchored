@@ -1,5 +1,5 @@
 # Research Insight: Cognitive Task-Switching & Mitigating Distractions
-> **Source Paper:** (Can Task-Switching Training Enhance Executive Control Functioning in Children with Attention Deficit/-Hyperactivity Disorder?)[doi.org/10.3389/fnhum.2011.00180]
+> **Source Paper:** [Can Task-Switching Training Enhance Executive Control Functioning in Children with Attention Deficit/-Hyperactivity Disorder?](doi.org/10.3389/fnhum.2011.00180)
 > **Core Relevance:** Provides a scientific framework for programmatically reducing user "mental lag" and friction when transitioning away from distractions back to productive tasks.
 
 ---
