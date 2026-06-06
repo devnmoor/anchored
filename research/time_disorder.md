@@ -1,6 +1,6 @@
 # Research Insight: ADHD as a Time Disorder (Temporal Myopia)
-> **Source Research:** [How to Cope With ADHD Time Blindness in Daily Life](https://reachlink.com/advice/adhd/adhd-time-blindness/) from [Attention-deficit/hyperactivity disorder, self-regulation, and time: toward a more comprehensive theory
-](https://pubmed.ncbi.nlm.nih.gov/9276836/)
+> **Source Research:** [Attention-deficit/hyperactivity disorder, self-regulation, and time: toward a more comprehensive theory
+](https://pubmed.ncbi.nlm.nih.gov/9276836/), [How to Cope With ADHD Time Blindness in Daily Life](https://reachlink.com/advice/adhd/adhd-time-blindness/)
 > 
 > **Core Relevance:** Explains why users drift into distractions (the "Now vs. Not Now" trap) and dictates how the app must externalize time processing since the user's internal clock is neurologically impaired.
 
