@@ -38,3 +38,26 @@ This study proves that **the brain can be trained to reduce this lag through tar
 ---
 
 ## 4. Proposed User Flow: The Re-Focus Journey
+> **Trigger:** User strays to a distraction (e.g., opens a blacklisted app or domain)
+
+1. **Detect & Interrupt**
+   * **Action:** A gentle overlay intercepts the screen instantly.
+   * **Goal:** Create a cognitive speedbump before the distraction takes hold.
+
+2. **Run the Cognitive Warm-Up**
+   * **Action:** User completes a 5-second, rapid task-switching micro-game.
+   * **Goal:** Clear the mental lag, flush the distraction from working memory, and force the brain into "high gear."
+
+3. **Context Injection**
+   * **Action:** The app displays their exact last productive state: *"You were writing line 42 of code."*
+   * **Goal:** Eliminate mixing costs by removing the mental effort needed to remember where they left off.
+
+4. **Frictionless Launch**
+   * **Action:** Provide a single, dominant Call-to-Action button.
+   * **Goal:** Smoothly slide the user directly back into their workspace while their focus is primed.
+  
+---
+
+## 5. Summary for Dev Notes / Architecture Design
+* **Motivation Follows Momentum:** Do not design UX safeguards around the assumption of user willpower. Willpower is depleted when switching costs are high.
+* **Programmatic Priming:** Treat the user's focus like a cold engine. Use the app's interceptive UI to warm up their executive functions *before* dumping them back into a high-thought workspace.
