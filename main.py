@@ -4,6 +4,7 @@ import time
 import platform
 from enum import Enum
 import threading
+from mss import MSS # For screen capture
 
 target_window = "Code"
 current_window = ""
