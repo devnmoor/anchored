@@ -5,7 +5,7 @@
 ---
 
 ## 1. High-Level Synthesis (The "Why It Matters")
-When users get distracted by a phone notification or a blacklisted app, they experience a high **"Switching Cost"**—a psychological lag state during which the brain struggles to disengage from the distraction and lock back onto work. This lag state is the exact window where users completely abandon their goals.
+When users, especially those with Attention-Deficit/Hyperactivity Disorder (ADHD), get distracted by a notification or a blacklisted app, they experience a high **"Switching Cost"**—a psychological lag state during which the brain struggles to disengage from the distraction and lock back onto work. This lag state is the exact window where users completely abandon their goals.
 
 This study proves that **the brain can be trained to reduce this lag through targeted micro-exercises.** By forcing the cognitive system to rapidly change gears under a structured rule set, we can artificially stimulate the user's executive function, making it significantly easier for them to drop the distraction and pivot back to work.
 
@@ -15,7 +15,7 @@ This study proves that **the brain can be trained to reduce this lag through tar
 
 | Scientific Term (From Paper) | Technical App Metric / Problem Space | UX Interpretation |
 | :--- | :--- | :--- |
-| **Switching Costs** | **Transition Friction (Latency)** | The time and mental effort it takes a user to close a distraction and re-focus on their primary task. |
+| **Switching Costs**<sup>[1](https://pmc.ncbi.nlm.nih.gov/articles/PMC3250077/#:~:text=Switching%20costs%20are%20defined%20as%20the%20difference%20in%20mean%20performance%20between%20switch%20and%20non%2Dswitch%20trials%20within%20mixed%2Dtask%20blocks%20and%20they%20are%20assumed%20to%20measure%20the%20ability%20to%20flexibly%20switch%20between%20tasks%20(cf.%20Kray%20and%20Lindenberger%2C%202000%3B%20Kray%20et%20al.%2C%202008).)<sup> | **Transition Friction (Latency)** | The time and mental effort it takes a user to close a distraction and re-focus on their primary task. |
 | **Mixing Costs** | **Mental Overhead / Context Bleed** | The cognitive drain of trying to remember where they left off on their work while still processing the distraction. |
 | **Interference Costs** | **The Shiny Object Effect** | The user's inability to ignore tempting, conflicting data (e.g., UI alerts, social feeds) right in front of them. |
 | **Inhibitory Control** | **Mental Brakes** | The user’s capacity to actively stop themselves from acting on an impulsive click or drift. |
