@@ -1,5 +1,6 @@
 # Research Insight: Cognitive Task-Switching & Mitigating Distractions
 > **Source Paper:** [Can Task-Switching Training Enhance Executive Control Functioning in Children with Attention Deficit/-Hyperactivity Disorder?](doi.org/10.3389/fnhum.2011.00180)
+> 
 > **Core Relevance:** Provides a scientific framework for programmatically reducing user "mental lag" and friction when transitioning away from distractions back to productive tasks.
 
 ---
@@ -16,9 +17,9 @@ This study proves that **the brain can be trained to reduce this lag through tar
 | Scientific Term (From Paper) | Technical App Metric / Problem Space | UX Interpretation |
 | :--- | :--- | :--- |
 | **Switching Costs**<sup>[1](https://pmc.ncbi.nlm.nih.gov/articles/PMC3250077/#:~:text=Switching%20costs%20are%20defined%20as%20the%20difference%20in%20mean%20performance%20between%20switch%20and%20non%2Dswitch%20trials%20within%20mixed%2Dtask%20blocks%20and%20they%20are%20assumed%20to%20measure%20the%20ability%20to%20flexibly%20switch%20between%20tasks%20(cf.%20Kray%20and%20Lindenberger%2C%202000%3B%20Kray%20et%20al.%2C%202008).)<sup> | **Transition Friction (Latency)** | The time and mental effort it takes a user to close a distraction and re-focus on their primary task. |
-| **Mixing Costs** | **Mental Overhead / Context Bleed** | The cognitive drain of trying to remember where they left off on their work while still processing the distraction. |
-| **Interference Costs** | **The Shiny Object Effect** | The user's inability to ignore tempting, conflicting data (e.g., UI alerts, social feeds) right in front of them. |
-| **Inhibitory Control** | **Mental Brakes** | The user’s capacity to actively stop themselves from acting on an impulsive click or drift. |
+| **Mixing Costs**<sup>[2](https://pmc.ncbi.nlm.nih.gov/articles/PMC3250077/#:~:text=This%20allows%20the%20determination%20of%20two%20types%20of%20performance%20costs%20associated%20with%20the%20switching%20situation%3A%20mixing%20costs%20are%20defined%20as%20the%20difference%20in%20mean%20performance%20between%20mixed%2Dtask%20and%20single%2Dtask%20blocks%20and%20are%20assumed%20to%20refer%20to%20the%20ability%20to%20maintain%20two%20task%20sets%20and%20select%20between%20them.)<sup> | **Mental Overhead / Context Bleed** | The cognitive drain of trying to remember where they left off on their work while still processing the distraction. |
+| **Interference Costs**<sup>[3](https://pmc.ncbi.nlm.nih.gov/articles/PMC3250077/#:~:text=Finally%2C%20the%20efficiency,and%20congruent%20trials.)<sup> | **The Shiny Object Effect** | The user's inability to ignore tempting, conflicting data (e.g., UI alerts, social feeds) right in front of them. |
+| **Inhibitory Control**<sup>[4](https://pmc.ncbi.nlm.nih.gov/articles/PMC3250077/#:~:text=The%20cognitive%20test%20battery%20included%20several%20experimental%20tasks%20and%20tests%20measuring%20executive%20control%20(inhibitory%20control%2C%20verbal%20working%20memory)%20and%20fluid%20intelligence.)<sup> | **Mental Brakes** | The user’s capacity to actively stop themselves from acting on an impulsive click or drift. |
 
 ---
 
