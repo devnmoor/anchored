@@ -46,14 +46,14 @@ When a user switches to a distracting app, that app becomes the absolute "NOW." 
 
 ## 4. Proposed User Flow: The Temporal Anchoring Loop
 
-* **[Trigger: Distraction Detected]**
-    * **1. Intercept & Context Reset:** App overlays the screen. Because the brain forgot the "Not Now" exists, the UI explicitly shows the exact last state: *"You were on Line 42 of the codebase."*
-* **▼**
-    * **2. The Micro-Commitment Gate:** The app invokes the 10-Minute Rule. It bypasses the abstract task size by asking: *"Can you give your project just 10 minutes right now?"*
-* **▼**
-    * **3. Frictionless Launch + Visual Clock:** The single CTA button roots the user directly back into the IDE/work environment.
-* **▼**
-    * **4. Externalized Tracking:** A persistent, shrinking geometric visual timer initiates on-screen, tracking the 10 minutes. The user doesn't have to keep track of time—the app holds it for them.
+> **Trigger:** Distraction Detected (User switches to a blacklisted app/domain).
+
+| Step | App Action (UX Implementation) | Scientific Mechanism (Barkley's 1997 Model) |
+| :--- | :--- | :--- |
+| **1. Intercept & Context Reset** | Screen overlay blocks the distraction and flashes their exact last productive state: *"You were on Line 42 of the codebase."* | **Combats the "Temporal Now":** Pulls the original task out of the "Not Now" zone and forces it back into active working memory. |
+| **2. The Micro-Commitment Gate** | UI hides the massive scope of the project and presents a single, tiny prompt: *"Can you give your project just 10 minutes right now?"* | **Reduces Activation Energy:** Breaks the task-initiation paralysis by making the time commitment mentally manageable. |
+| **3. Frictionless Launch** | A single, prominent primary button routes the user instantly back into their IDE or workspace. | **Eliminates Transition Friction:** Minimizes the cognitive "lag time" where a user might drift off to a second distraction. |
+| **4. Externalized Tracking** | A persistent, shrinking visual timer dock initiates on the edge of the screen, counting down the 10 minutes. | **Externalizes Time Perception:** Bypasses the broken internal clock of the prefrontal cortex by making time physically visible. |
 
 ---
 
