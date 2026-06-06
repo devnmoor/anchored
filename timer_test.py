@@ -10,9 +10,9 @@ state = AppState.FOCUSED
 total = 1800
 start_time = time.time()
 paused_time_remaining = None
+time_remaining = total
 
 def timer_loop():
-    time_remaining = total
     while True:
         if state == AppState.FOCUSED:
             elapsed = time.time() - start_time
@@ -22,9 +22,6 @@ def timer_loop():
                 time_remaining = paused_time_remaining - elapsed
             print(time_remaining)
             time.sleep(1)
-        elif state == AppState.DISTRACTED:
-            paused_time_remaining = time_remaining # Move to where we switch to DISTRACTED, not a bug, just messy
-timer_loop()
 
 # Without threading, if you just called timer_loop() directly, it would run the while True loop forever and the rest of your code below it would never execute.Threading lets timer_loop run in the background while your main program keeps going and does other things.
 t1 = threading.Thread(target = timer_loop, daemon = True)
@@ -34,5 +31,13 @@ t1.start()
 
 
 time.sleep(10)
+state = AppState.DISTRACTED # Simulating getting distracted after 10 seconds of focus
+paused_time_remaining = time_remaining
+print("switched to distracted")
 
-time.sleep
+time.sleep(5)
+state = AppState.FOCUSED
+start_time = time.time()
+print("switched back to focused")
+
+time.sleep(10)
