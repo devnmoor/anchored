@@ -53,3 +53,20 @@ switched back to focused
 1782.9234731197357
 1781.9183781147003
 ```
+
+
+"Why is it `mss.mss()` — the module and class have the same name? Could you do `from mss import mss` and just call `mss()` directly instead?"
+
+```python
+# Option 1
+import mss
+with mss.mss() as sct:
+    ...
+
+# Option 2
+from mss import mss
+with mss() as sct:
+    ...
+```
+
+The reason the first style is common is to avoid confusion — mss is both the module name and the class name inside it. If you do from mss import mss you now have a variable called mss that shadows the module, which can cause confusion later. Keeping it as mss.mss() makes it explicit that you're calling the mss class from the mss module.

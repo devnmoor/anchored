@@ -4,6 +4,8 @@ import time
 import platform
 from enum import Enum
 import threading
+from mss import mss as MSSCapture
+from PIL import Image
 
 target_window = "Code"
 current_window = ""
@@ -58,10 +60,16 @@ def window_monitor_loop():
             continue
         elif current_window == target_window:
             if state == AppState.DISTRACTED:
+                img = capture_screen()
+                img.save("captures/distracted.png")
+                # Add capture_screen() to capture what they got distracted by right before going back to focus
                 distracted_timer = 0
                 paused_time_remaining = time_remaining
             state = AppState.FOCUSED
         else:
+            img = capture_screen()
+            img.save("captures/last_focus.png")
+            # Add capture_screen() to capture what they were working on right before getting distracted
             state = AppState.DISTRACTED
         time.sleep(0.5)
 
@@ -100,6 +108,14 @@ def timer_loop():
             print("--- switched to focused ---")
             state = AppState.FOCUSED
 
+# --- CAPTURE SCREEN FUNCTIONALITY ---
+
+def capture_screen(): # capture_screen() returns a PIL `Image` object (essentially an in-memory representation of the screenshot that you can save to disk, convert ot base64 to send to an LLM, and resize, crop, or manipulate w/PIL)
+    with MSSCapture() as sct:
+        screenshot = sct.grab(sct.monitors[1])
+        img = Image.frombytes("RGB", screenshot.size, screenshot.rgb)
+        return img
+    
 # --- THEN START THREADS ---
 
 # Without threading, timer_loop and window_monitor_loop would block each other.
