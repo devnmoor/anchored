@@ -20,5 +20,6 @@ def save_sct(img):
         img.save("distracted.png")
     elif state == AppState.FOCUSED:
         img.save("last_focus.png")
+
 img = capture_screen()
 save_sct(img)
