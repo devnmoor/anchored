@@ -52,14 +52,14 @@ def window_monitor_loop():
     global state, paused_time_remaining, distracted_timer
     while True:
         current_window = get_active_window()
-        print(f"active window: {current_window}")
+        # print(f"active window: {current_window}")
         if state == AppState.ALERT:
-            time.sleep(2)
+            # time.sleep(2)
             continue
-        if current_window == target_window:
+        elif current_window == target_window:
             if state == AppState.DISTRACTED:
-                paused_time_remaining = time_remaining
                 distracted_timer = 0
+                paused_time_remaining = time_remaining
             state = AppState.FOCUSED
         else:
             state = AppState.DISTRACTED
@@ -83,10 +83,19 @@ def timer_loop():
             if distracted_timer >= 5: # Change to 300 (5 minutes) for production
                 state = AppState.ALERT
         elif state == AppState.ALERT:
-            print("ALERT: get back to work")
-            time.sleep(5) # Change to 15 seconds for production
+            # Blur the entire screen
+            # 15 seconds for AI context bridge & empyting brain animation
+            # 15 seconds for task-switching game & filling brain animation
             paused_time_remaining = time_remaining
             distracted_timer = 0
+            print("[blurred screen]")
+            time.sleep(1)
+            print("AI context bridge & brain animation 1")
+            time.sleep(5) # Change to 15 seconds for production
+            print("Task-switching micro-game")
+            # print("ALERT: get back to work")
+            time.sleep(5) # Change to 15 seconds for production
+            # paused_time_remaining = time_remaining
             start_time = time.time()
             print("--- switched to focused ---")
             state = AppState.FOCUSED

@@ -1,6 +1,5 @@
 # Research Insight: ADHD as a Time Disorder (Temporal Myopia)
-> **Source Research:** [Attention-deficit/hyperactivity disorder, self-regulation, and time: toward a more comprehensive theory
-](https://pubmed.ncbi.nlm.nih.gov/9276836/), [How to Cope With ADHD Time Blindness in Daily Life](https://reachlink.com/advice/adhd/adhd-time-blindness/)
+> **Source Research:** [Attention-deficit/hyperactivity disorder, self-regulation, and time: toward a more comprehensive theory](https://pubmed.ncbi.nlm.nih.gov/9276836/), [How to Cope With ADHD Time Blindness in Daily Life](https://reachlink.com/advice/adhd/adhd-time-blindness/)
 > 
 > **Core Relevance:** Explains why users drift into distractions (the "Now vs. Not Now" trap) and dictates how the app must externalize time processing since the user's internal clock is neurologically impaired.
 
@@ -46,14 +45,32 @@ When a user switches to a distracting app, that app becomes the absolute "NOW." 
 
 ## 4. Proposed User Flow: The Temporal Anchoring Loop
 
-> **Trigger:** Distraction Detected (User switches to a blacklisted app/domain).
+> **Trigger:** Target Window state changes from active to inactive (e.g., User leaves "Code" window).
 
-| Step | App Action (UX Implementation) | Scientific Mechanism (Barkley's 1997 Model) |
-| :--- | :--- | :--- |
-| **1. Intercept & Context Reset** | Screen overlay blocks the distraction and flashes their exact last productive state: *"You were on Line 42 of the codebase."* | **Combats the "Temporal Now":** Pulls the original task out of the "Not Now" zone and forces it back into active working memory. |
-| **2. The Micro-Commitment Gate** | UI hides the massive scope of the project and presents a single, tiny prompt: *"Can you give your project just 10 minutes right now?"* | **Reduces Activation Energy:** Breaks the task-initiation paralysis by making the time commitment mentally manageable. |
-| **3. Frictionless Launch** | A single, prominent primary button routes the user instantly back into their IDE or workspace. | **Eliminates Transition Friction:** Minimizes the cognitive "lag time" where a user might drift off to a second distraction. |
-| **4. Externalized Tracking** | A persistent, shrinking visual timer dock initiates on the edge of the screen, counting down the 10 minutes. | **Externalizes Time Perception:** Bypasses the broken internal clock of the prefrontal cortex by making time physically visible. |
+### System State & Timing Matrix
+
+| Step | System State | Timing Logic | App Action & Architectural Reason |
+| :--- | :--- | :--- | :--- |
+| **1** | **Main Focus Active** | Starts immediately on app run. | Main tracking timer runs exclusively while the target window is active. |
+| **2** | **The Drift Intercept** | Distraction Timer begins; Main Timer pauses. | Triggered instantly when user shifts focus away from the target window. |
+| **3** | **Threshold Breach** | Hits exactly 5:00 minutes *(0:05 for testing)*. | System registers the breach, resets the Distraction Timer to 0, and initializes the Alert Window. |
+| **4** | **Alert Intercept View: Phase 1** | Seconds 0 to 15 of Alert Window *(0:01 to 0:02 for testing)*. | Full-screen overlay blurs distraction. Displays the AI-generated side-by-side context bridge to drag working memory out of the "Not Now" zone. |
+| **5** | **Alert Intercept View: Phase 2** | Seconds 15 to 30 of Alert Window *(0:02 to 0:03 for testing)*. | Overlays the Task-Switching Microgame to force rapid neural rule-switching and clear out attention residue. |
+
+---
+
+### Gamified Core Reset Animations
+
+6. **The Attention Reservoir Drain (Tied to Step 4 / Phase 1)**
+    * **UX Implementation:** A vector silhouette of a brain or cognitive battery core sits at the center of the screen. At Second 0, it is sloshing and full of a chaotic, toxic color customized to match the distraction app (e.g., YouTube Red, Twitter/X Black). Over the first 15 seconds, this liquid visibly drains out of the bottom of the asset until empty.
+    * **Scientific Mechanism:** Externalizes the cognitive un-binding of the distraction. It visually cues the brain that the "mental pollution" from the distraction is being flushed out, establishing an explicit psychological clean slate.
+
+7. **The Hyperfocus Dopamine Charge (Tied to Step 5 / Phase 2)**
+    * **UX Implementation:** As the Task-Switching Microgame fires up, every successful user interaction causes a clean, vibrant fluid to rush upward from the bottom of the empty brain graphic. You can choose:
+        * a. **Clean Electric Blue:** Symbolizing crisp, clinical cognitive concentration.
+        * b. **Golden Yellow:** Symbolizing a surge of motivational dopamine.
+    * Little static sparks or glowing energy particles emit from the reservoir as it hits 100% full capacity exactly at Second 30, right as the choice buttons unlock.
+    * **Scientific Mechanism:** Provides immediate, gamified micro-rewards for interacting with the microgame. It visually validates to the ADHD user that their effort is physically "powering up" the executive control networks needed to transition smoothly back to work.
 
 ---
 
