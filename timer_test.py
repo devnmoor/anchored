@@ -29,4 +29,6 @@ timer_loop()
 t1 = threading.Thread(target = timer_loop, daemon = True)
 t1.start()
 
+time.sleep(10)
+
 time.sleep
