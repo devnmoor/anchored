@@ -72,4 +72,19 @@ with mss() as sct:
 The reason the first style is common is to avoid confusion — mss is both the module name and the class name inside it. If you do from mss import mss you now have a variable called mss that shadows the module, which can cause confusion later. Keeping it as mss.mss() makes it explicit that you're calling the mss class from the mss module.
 
 
-ADR stands for Architecture Decision Record
+ADR stands for Architecture Decision Recording
+
+`with` is a context manager — it automatically closes the file when you're done with it.
+
+Without `with`:
+```python
+f = open("file.png", "rb")
+data = f.read()
+f.close()  # you have to remember to do this
+```
+
+With `with`:
+```python
+with open("file.png", "rb") as f:
+    data = f.read()
+# file closes automatically here
