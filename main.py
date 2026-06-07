@@ -4,7 +4,8 @@ import time
 import platform
 from enum import Enum
 import threading
-from mss import mss as MSSCapture
+import os
+import mss
 from PIL import Image
 
 target_window = "Code"
@@ -21,6 +22,8 @@ start_time = time.time()
 paused_time_remaining = None
 time_remaining = total
 distracted_timer = 0
+
+os.makedirs("captures", exist_ok=True)
 
 # --- ALL FUNCTIONS DEFINED FIRST ---
 
@@ -56,20 +59,19 @@ def window_monitor_loop():
         current_window = get_active_window()
         # print(f"active window: {current_window}")
         if state == AppState.ALERT:
-            # time.sleep(2)
+            time.sleep(0.5)
             continue
         elif current_window == target_window:
+            img = capture_screen()
+            img.save("captures/last_focus.png")
             if state == AppState.DISTRACTED:
-                img = capture_screen()
-                img.save("captures/distracted.png")
-                # Add capture_screen() to capture what they got distracted by right before going back to focus
                 distracted_timer = 0
                 paused_time_remaining = time_remaining
             state = AppState.FOCUSED
         else:
             img = capture_screen()
-            img.save("captures/last_focus.png")
-            # Add capture_screen() to capture what they were working on right before getting distracted
+            img.save("captures/distracted.png")
+            # Captures what they were working on right before getting distracted — only fires once on transition
             state = AppState.DISTRACTED
         time.sleep(0.5)
 
@@ -92,30 +94,31 @@ def timer_loop():
                 state = AppState.ALERT
         elif state == AppState.ALERT:
             # Blur the entire screen
-            # 15 seconds for AI context bridge & empyting brain animation
+            # 15 seconds for AI context bridge & emptying brain animation
             # 15 seconds for task-switching game & filling brain animation
             paused_time_remaining = time_remaining
             distracted_timer = 0
+            # Captures what they are currently distracted by when the alert fires
             print("[blurred screen]")
             time.sleep(1)
             print("AI context bridge & brain animation 1")
             time.sleep(5) # Change to 15 seconds for production
             print("Task-switching micro-game")
-            # print("ALERT: get back to work")
             time.sleep(5) # Change to 15 seconds for production
-            # paused_time_remaining = time_remaining
             start_time = time.time()
             print("--- switched to focused ---")
             state = AppState.FOCUSED
 
 # --- CAPTURE SCREEN FUNCTIONALITY ---
 
-def capture_screen(): # capture_screen() returns a PIL `Image` object (essentially an in-memory representation of the screenshot that you can save to disk, convert ot base64 to send to an LLM, and resize, crop, or manipulate w/PIL)
-    with MSSCapture() as sct:
+# capture_screen() returns a PIL Image object (essentially an in-memory representation of the screenshot
+# that you can save to disk, convert to base64 to send to an LLM, and resize, crop, or manipulate w/PIL)
+def capture_screen():
+    with mss.MSS() as sct:
         screenshot = sct.grab(sct.monitors[1])
         img = Image.frombytes("RGB", screenshot.size, screenshot.rgb)
         return img
-    
+
 # --- THEN START THREADS ---
 
 # Without threading, timer_loop and window_monitor_loop would block each other.
