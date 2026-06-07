@@ -70,3 +70,6 @@ with mss() as sct:
 ```
 
 The reason the first style is common is to avoid confusion — mss is both the module name and the class name inside it. If you do from mss import mss you now have a variable called mss that shadows the module, which can cause confusion later. Keeping it as mss.mss() makes it explicit that you're calling the mss class from the mss module.
+
+
+ADR stands for Architecture Decision Record
