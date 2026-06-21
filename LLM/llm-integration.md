@@ -33,3 +33,4 @@ I created a virtual environemnt to keep my project's packages separate from my s
 
 **Important:**
 `dotenv` loads the variables from your `.env` file into your Python environment.
+- In .env the dot just means it's a hidden file on Mac/Linux — files starting with . don't show up in Finder or ls by default. It's a convention for configuration files you don't want cluttering your project view.
