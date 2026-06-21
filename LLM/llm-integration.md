@@ -28,3 +28,8 @@ Order matters because LLMs read prompts sequentially and give more weight to con
 1. Context: "The user is working on X and has Y minutes remaining"
 2. Evidence: last_focus image, then distracted image
 3. Instruction: "Write a message that does A, B, C in style Z"
+
+I created a virtual environemnt to keep my project's packages separate from my system Python, which prevents conflicts. So, I pressed "Create" to the notification: You may have installed Python packages into your global environment, which can cause conflicts between package versions. Would you like to create a virtual environment with these packages to isolate your dependencies?
+
+**Important:**
+`dotenv` loads the variables from your `.env` file into your Python environment.
