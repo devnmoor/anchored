@@ -1,5 +1,6 @@
 def image_to_base64(filepath):
     with open(filepath, "rb") as f: # rb as in read bits
+        # The f is just like a placeholder variable...
         data = f.read()
     return base64.b64encode(data).decode("utf-8")
 
@@ -18,4 +19,11 @@ We generally expect that the user keeps the target window open in full screen, n
         [- analyze of their screen activity is an enhancement that we can try and implement later, but it could be a lot of work and we can't guarentee it being flawless]
         - Look at the applications open and any main window
         - Gather as much text and context from the image as possible
+"""
+
+"""
+image_to_base64(filepath) function opens the file at that path in binary mode with the "rb", which means "read bytes"
+f.read() reads the entire file as raw bytes (just a long sequence of numbers representing the image data)
+base64.b64encode(data) converts those bytes into a base64 encoded sequence (just a way to represent any binary data, like images, audio, or files as plain text using only 64 safe characters [A-Z, a-z, 0-9, +,/])
+.decode("utf-8") converts that into a regular Python string
 """
