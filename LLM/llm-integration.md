@@ -2,7 +2,7 @@
 You are basically sending a **request** over the internet **to a server** (e.g., OpenAI, Anthropic, etc.) that **runs the model**. You send text in, you get text back. It's just an HTTP request, like how a website loads, except you're sending a prompt and receiving a response.
 
 ### Basic structure of every API call
-1. **Authentication** - your API key proves you're allowed to use it (and charges your account)
+1. The **authentication** - your API key proves you're allowed to use it (and charges your account)
 2. The **request** - your prompt, which model to use, and any settings like max response length
 3. The **response** — the model's output, returned as a Python object you can read
 
