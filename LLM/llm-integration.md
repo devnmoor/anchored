@@ -1,3 +1,5 @@
+## Background
+
 ### What an LLM API is
 You are basically sending a **request** over the internet **to a server** (e.g., OpenAI, Anthropic, etc.) that **runs the model**. You send text in, you get text back. It's just an HTTP request, like how a website loads, except you're sending a prompt and receiving a response.
 
@@ -34,3 +36,21 @@ I created a virtual environemnt to keep my project's packages separate from my s
 **Important:**
 `dotenv` loads the variables from your `.env` file into your Python environment.
 - In .env the dot just means it's a hidden file on Mac/Linux — files starting with . don't show up in Finder or ls by default. It's a convention for configuration files you don't want cluttering your project view.
+
+## LLM Integration
+
+### <mark>Input</mark>
+**Session context (from user at session start):**
+- Goal — what they are working on
+- Time goal — how long they want to lock in for
+- Time remaining — how much time is left in the session
+- Target application — e.g. VSCode, Google Docs
+- Priority/urgency level — how important/time-sensitive the task is
+- Task context — e.g. class assignment, research, independent project, studying, exam prep, meeting prep
+
+**Screenshots:**
+- `last_focus.png` — screenshot of their screen right before they got distracted
+- `distracted.png` — screenshot of what they are currently looking at when the alert fires
+
+### <mark>Output</mark>
+A short, psychologically-informed message shown to the user in the full-screen alert when they have been off their target window for 5+ minutes. The message should re-orient them to where they left off and motivate them to return to work.
