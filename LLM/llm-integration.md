@@ -6,6 +6,16 @@ You are basically sending a **request** over the internet **to a server** (e.g.,
 2. The **request** - your prompt, which model to use, and any settings like max response length
 3. The **response** — the model's output, returned as a Python object you can read
 
+Text-only example:
+```python
+response = client.chat(
+    model="gpt-4o",
+    messages=[
+        {"role": "user", "content": "What is 2+2?"}
+    ]
+)
+print(response.content)  # "4"
+```
 **Multimodal (text + images)**
 Newer models like GPT-4o and Claude can accept images alongside text. Instead of just sending a string as `content`, you send a list that contains both text and image data. The image has to be encoded as base64 — a way of representing binary file data (like a PNG) as a plain text string that can travel over the internet.
 
