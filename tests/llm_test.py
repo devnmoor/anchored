@@ -1,3 +1,12 @@
+import base64
+import os
+from openai import OpenAI
+from dotenv import load_dotenv
+# In .env the dot just means it's a hidden file on Mac/Linux — files starting with . don't show up in Finder or ls by default. It's a convention for configuration files you don't want cluttering your project view.
+
+load_dotenv()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 def image_to_base64(filepath):
     with open(filepath, "rb") as f: # rb as in read bits
         # The f is just like a placeholder variable...
