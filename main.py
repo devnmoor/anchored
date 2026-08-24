@@ -29,26 +29,6 @@ then it compares the two and asks the user between those two which has higher pr
   but when the queue is NOT empty they are asked to choose is this higher priority then X task or lower priority, and systematically organizes them all into an ordered queue
 '''
 
-
-# def start():
-#     while True:
-#         print("Hello! Welcome to Anchored!")
-#         # Are you a first time user? Yes/No?
-#         config.goal = input("What are you working on? (e.g. finishing the lit review section)\n")
-#         config.total = 60 * float(input("How many minutes do you want to anchor in for?\n"))
-#         while config.total < 1500:
-#             config.total = 60 * float(input("You need to anchor in for at least 25 minutes.\nHow many minutes do you want to anchor in for?\n"))
-#         config.target_window = prompt_target_window()
-#         config.current_window = ""
-#         config.priority = input("How urgent is this? (low/medium/high)\n")
-#         # if config.char_is_in(':', config.total.lower()):
-#         #     # Interpret as end time relative to current time
-#         config.task_context = input("What's this for? (e.g. class assignment, research, studying, meeting prep)\n")
-#         timer_loop()
-#         from llm import generate_message
-#         generate_message(config.style, config.goal, config.target_window, config.time_remaining, config.priority, config.task_context)
-        
-
 def get_open_window_names():
     os_system = platform.system()
     if os_system == "Darwin":
@@ -190,7 +170,7 @@ def capture_screen():
 
 # Without threading, timer_loop and window_monitor_loop would block each other.
 # Threading lets both run simultaneously in the background.
-def start():
+def start_anchored():
     while True:
         print("Hello! Welcome to Anchored!")
         # Are you a first time user? Yes/No?
@@ -211,7 +191,7 @@ def start():
         # from llm import generate_message
         # generate_message(config.style, config.goal, config.target_window, config.time_remaining, config.priority, config.task_context)
 
-start()
+start_anchored()
 # t1 = threading.Thread(target=timer_loop, daemon=True)
 # t2 = threading.Thread(target=window_monitor_loop, daemon=True)
 # t1.start()
