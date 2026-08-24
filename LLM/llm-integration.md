@@ -116,3 +116,23 @@ I created a virtual environemnt to keep my project's packages separate from my s
 
 ### <mark>Output</mark>
 A short, psychologically-informed message shown to the user in the full-screen alert when they have been off their target window for 5+ minutes. The message should re-orient them to where they left off and motivate them to return to work.
+
+
+### What does the `Message` object include?
+```python
+"message": {
+    "role": "assistant",
+    "content": "Hello! How can I assist you today?",
+    "refusal": null,
+    "annotations": []
+},
+```
+
+| Field | Source | Format | Validation |
+|---|---|---|---|
+| **goal** | user input | free text | non-empty, capped ~200 chars |
+| **time_goal_minutes** | user input | number | positive numeric |
+| **time_remaining** | not user input — computed | derived from time_goal + elapsed time | n/a |
+| **target_app** | user input | must match a real open window/process name | validated against `get_open_window_names()` |
+| **priority** | user input | one of low / medium / high | must match exactly (case-insensitive) |
+| **task_context** | user input | free text | non-empty |

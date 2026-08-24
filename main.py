@@ -7,39 +7,83 @@ import threading
 import os
 import mss
 from PIL import Image
+import config
 
-target_window = "Code"
-current_window = ""
+'''
+These are the things the user needs to provide us first and foremost:
+Goal — what they are working on
+Time goal — how long they want to lock in for
+Time remaining — how much time is left in the session
+Target application — e.g. VSCode, Google Docs
+Priority/urgency level — how important/time-sensitive the task is
+Task context — e.g. class assignment, research, independent project, studying, exam prep, meeting prep
+'''
 
+def start():
+    while True:
+        print("Hello! Welcome to Anchored!")
+        # Are you a first time user? Yes/No?
+        config.goal = input("What are you working on? (e.g. finishing the lit review section)\n")
+        config.total = 60 * float(input("How many minutes do you want to anchor in for?\n"))
+        while config.total < 1200:
+            config.total = 60 * float(input("You need to anchor in for at least 20 minutes.\nHow many minutes do you want to anchor in for?\n"))
+        
+        # if config.char_is_in(':', config.total.lower()):
+        #     # Interpret as end time relative to current time        
+
+def get_open_window_names():
+    os_system = platform.system()
+    if os_system == "Darwin":
+        import subprocess
+        script = 'tell application "System Events" to get name of every process whose background only is false'
+        result = subprocess.run(['osascript', '-e', script], capture_output=True, text=True)
+        return [name.strip() for name in result.stdout.split(",")]
+    elif os_system == "Windows":
+        import pygetwindow as gw
+        return [t for t in gw.getAllTitles() if t.strip()]
+    else:
+        return []
+
+def prompt_target_window():
+    valid_names = get_open_window_names()
+    while True:
+        entered = input("What is your target window?\n").strip()
+        match = next((n for n in valid_names if n.lower() == entered.lower()), None)
+        if match:
+            return match
+        print(f"'{entered}' isn't currently open. Open windows: {', '.join(valid_names)}")
+
+config.target_window = prompt_target_window()
+config.current_window = ""
+
+print(config.target_window)
 class AppState(Enum):
     FOCUSED = "focused"
     DISTRACTED = "distracted"
     ALERT = "alert"
 
-state = AppState.FOCUSED
-total = 1800
-start_time = time.time()
-paused_time_remaining = None
-time_remaining = total
-distracted_timer = 0
+config.state = AppState.FOCUSED
+config.total = 10
+config.start_time = time.time()
+config.paused_time_remaining = None
+config.time_remaining = config.total
+config.distracted_timer = 0
 
 os.makedirs("captures", exist_ok=True)
 
 # --- ALL FUNCTIONS DEFINED FIRST ---
 
 def get_active_window_mac():
-    global current_window
     import subprocess
     script = 'tell application "System Events" to get name of first application process whose frontmost is true'
     result = subprocess.run(['osascript', '-e', script], capture_output=True, text=True)
-    current_window = result.stdout.strip()
+    config.current_window = result.stdout.strip()
     return result.stdout.strip()
 
 def get_active_window_windows():
-    global current_window
     import pygetwindow as gw
     try:
-        current_window = gw.getActiveWindow().title
+        config.current_window = gw.getActiveWindow().title
         return gw.getActiveWindow().title
     except:
         return None
@@ -54,50 +98,54 @@ def get_active_window():
         return None
 
 def window_monitor_loop():
-    global state, paused_time_remaining, distracted_timer
+    # global state, paused_time_remaining, distracted_timer
     while True:
-        current_window = get_active_window()
+        config.current_window = get_active_window()
         # print(f"active window: {current_window}")
-        if state == AppState.ALERT:
+        if config.state == AppState.ALERT:
             time.sleep(0.5)
             continue
-        elif current_window == target_window:
+        elif config.current_window == config.target_window:
             img = capture_screen()
             img.save("captures/last_focus.png")
-            if state == AppState.DISTRACTED:
-                distracted_timer = 0
-                paused_time_remaining = time_remaining
-            state = AppState.FOCUSED
+            if config.state == AppState.DISTRACTED:
+                config.distracted_timer = 0
+                config.paused_time_remaining = config.time_remaining
+            config.state = AppState.FOCUSED
         else:
             img = capture_screen()
             img.save("captures/distracted.png")
             # Captures what they were working on right before getting distracted — only fires once on transition
-            state = AppState.DISTRACTED
+            config.state = AppState.DISTRACTED
         time.sleep(0.5)
 
 def timer_loop():
-    global time_remaining, paused_time_remaining, distracted_timer, state, start_time
+    # global time_remaining, paused_time_remaining, distracted_timer, state, start_time
     while True:
-        if state == AppState.FOCUSED:
-            elapsed = time.time() - start_time
-            if paused_time_remaining == None:
-                time_remaining = total - elapsed
+        # Make sure the two lines below work as intended
+        if elapsed == config.total and config.distracted_timer < config.distraction_time_limit:
+            config.anchor_session_over() # CALL THIS NEW FUNCTION FOR WHEN THEY HAVE A SUCCESSFUL LOCKIN SESSION
+            
+        if config.state == AppState.FOCUSED:
+            elapsed = time.time() - config.start_time
+            if config.paused_time_remaining == None:
+                config.time_remaining = config.total - elapsed
             else:
-                time_remaining = paused_time_remaining - elapsed
-            print(f"timer: {time_remaining:.0f}s remaining")
+                config.time_remaining = config.paused_time_remaining - elapsed
+            print(f"timer: {config.time_remaining:.0f}s remaining")
             time.sleep(1)
-        elif state == AppState.DISTRACTED:
+        elif config.state == AppState.DISTRACTED:
             time.sleep(1)
-            distracted_timer += 1
-            print(f"distracted for {distracted_timer}s")
-            if distracted_timer >= 5: # Change to 300 (5 minutes) for production
-                state = AppState.ALERT
-        elif state == AppState.ALERT:
+            config.distracted_timer += 1
+            print(f"distracted for {config.distracted_timer}s")
+            if config.distracted_timer >= config.distraction_time_limit: # Change to 300 (5 minutes) for production
+                config.state = AppState.ALERT
+        elif config.state == AppState.ALERT:
             # Blur the entire screen
             # 15 seconds for AI context bridge & emptying brain animation
             # 15 seconds for task-switching game & filling brain animation
-            paused_time_remaining = time_remaining
-            distracted_timer = 0
+            config.paused_time_remaining = config.time_remaining
+            config.distracted_timer = 0
             # Captures what they are currently distracted by when the alert fires
             print("[blurred screen]")
             time.sleep(1)
@@ -105,9 +153,9 @@ def timer_loop():
             time.sleep(5) # Change to 15 seconds for production
             print("Task-switching micro-game")
             time.sleep(5) # Change to 15 seconds for production
-            start_time = time.time()
+            config.start_time = time.time()
             print("--- switched to focused ---")
-            state = AppState.FOCUSED
+            config.state = AppState.FOCUSED
 
 # --- CAPTURE SCREEN FUNCTIONALITY ---
 
