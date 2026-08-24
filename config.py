@@ -26,6 +26,7 @@ priority = "high"
 task_context = ""
 
 distraction_time_limit = 5 # Represents 5 minutes
+ai_bridge_duration = 15 # Seconds the AI context bridge & brain animation stays up
 
 # Search for something in string
 def char_is_in(t, input_text):
