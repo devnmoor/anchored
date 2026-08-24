@@ -129,15 +129,18 @@ def timer_loop():
                 config.time_remaining = config.paused_time_remaining - elapsed
             print(f"timer: {config.time_remaining:.0f}s remaining")
             print(f"current app: {config.current_window}")
+            print(f"paused time remaining: {config.paused_time_remaining}")
             time.sleep(1)
         elif config.state == AppState.DISTRACTED:
             time.sleep(1)
             config.distracted_timer += 1
             print(f"distracted for {config.distracted_timer}s")
             print(f"current app: {config.current_window}")
+            print(f"paused time remaining: {config.paused_time_remaining}")
             if config.distracted_timer >= config.distraction_time_limit: # Change to 300 (5 minutes) for production
                 config.state = AppState.ALERT
         elif config.state == AppState.ALERT:
+            print(f"paused time remaining: {config.paused_time_remaining}")
             # Blur the entire screen
             # 15 seconds for AI context bridge & emptying brain animation
             # 15 seconds for task-switching game & filling brain animation
@@ -149,7 +152,7 @@ def timer_loop():
             print("AI context bridge & brain animation 1")
             from llm import generate_message
             generate_message(config.style, config.goal, config.target_window, config.time_remaining, config.priority, config.task_context)
-            time.sleep(5) # Change to 15 seconds for production
+            time.sleep(config.ai_bridge_duration)
             print("Task-switching micro-game")
             time.sleep(5) # Change to 15 seconds for production
             config.start_time = time.time()
