@@ -83,14 +83,14 @@ def generate_message(style, goal, target_app, time_remaining, priority, task_con
         ]}
     ]
     response = client.chat.completions.create(model="gpt-5.6-luna", messages=messages)
-    print(response.choices[0].message.content)
+    return response.choices[0].message.content
 
-# if __name__ == "__main__":
-#     generate_message(
-#         style=config.style,
-#         goal=config.goal,
-#         target_app=config.target_window,
-#         time_remaining=config.time_remaining,
-#         priority=config.priority,
-#         task_context=config.task_context
-#     )
+if __name__ == "__main__":
+    print(generate_message(
+        style=config.style,
+        goal=config.goal,
+        target_app=config.target_window,
+        time_remaining=config.time_remaining,
+        priority=config.priority,
+        task_context=config.task_context
+    ))

@@ -10,6 +10,7 @@ from PIL import Image
 import config
 from openai import OpenAI
 from dotenv import load_dotenv
+from llm import generate_message
 
 '''
 These are the things the user needs to provide us first and foremost:
@@ -150,8 +151,8 @@ def timer_loop():
             print("[blurred screen]")
             time.sleep(1)
             print("AI context bridge & brain animation 1")
-            from llm import generate_message
-            generate_message(config.style, config.goal, config.target_window, config.time_remaining, config.priority, config.task_context)
+            message = generate_message(config.style, config.goal, config.target_window, config.time_remaining, config.priority, config.task_context)
+            print(message)  # replace with UI display later
             time.sleep(config.ai_bridge_duration)
             print("Task-switching micro-game")
             time.sleep(5) # Change to 15 seconds for production
@@ -214,3 +215,13 @@ time.time() gives you the current time right now. start_time is the time when th
 state machine
 The app is a state machine. It always knows what "mode" it's in, and that mode determines what's allowed to happen. In Python, the simplest way is an enum.
 """
+
+# When do we start the latency timer?
+# When time.time() = start_time + distracted_timer + time_remaining
+
+'''
+alert_start = time.time()  # when alert fires
+# ... user sees message ...
+alert_end = time.time()  # when they return to target window
+return_latency = alert_end - alert_start
+'''
