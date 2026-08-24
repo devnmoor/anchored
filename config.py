@@ -22,8 +22,10 @@ start_time = time.time()
 paused_time_remaining = None
 time_remaining = total
 distracted_timer = 0
+priority = "high"
+task_context = ""
 
-distraction_time_limit = 300 # Represents 5 minutes
+distraction_time_limit = 5 # Represents 5 minutes
 
 # Search for something in string
 def char_is_in(t, input_text):

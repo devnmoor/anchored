@@ -8,6 +8,8 @@ import os
 import mss
 from PIL import Image
 import config
+from openai import OpenAI
+from dotenv import load_dotenv
 
 '''
 These are the things the user needs to provide us first and foremost:
@@ -19,17 +21,33 @@ Priority/urgency level — how important/time-sensitive the task is
 Task context — e.g. class assignment, research, independent project, studying, exam prep, meeting prep
 '''
 
-def start():
-    while True:
-        print("Hello! Welcome to Anchored!")
-        # Are you a first time user? Yes/No?
-        config.goal = input("What are you working on? (e.g. finishing the lit review section)\n")
-        config.total = 60 * float(input("How many minutes do you want to anchor in for?\n"))
-        while config.total < 1200:
-            config.total = 60 * float(input("You need to anchor in for at least 20 minutes.\nHow many minutes do you want to anchor in for?\n"))
+'''
+Ultimatley users can make something similar to an itinerary, where they can add tasks and anchored sessions into a queue or something,
+and if they create a new task and they set it priority high and there is already a priority high task in the queue (if queue not empty),
+then it compares the two and asks the user between those two which has higher priority or something.
+- Alternatively, while the queue is empty once they add a task they don't a priority,
+  but when the queue is NOT empty they are asked to choose is this higher priority then X task or lower priority, and systematically organizes them all into an ordered queue
+'''
+
+
+# def start():
+#     while True:
+#         print("Hello! Welcome to Anchored!")
+#         # Are you a first time user? Yes/No?
+#         config.goal = input("What are you working on? (e.g. finishing the lit review section)\n")
+#         config.total = 60 * float(input("How many minutes do you want to anchor in for?\n"))
+#         while config.total < 1500:
+#             config.total = 60 * float(input("You need to anchor in for at least 25 minutes.\nHow many minutes do you want to anchor in for?\n"))
+#         config.target_window = prompt_target_window()
+#         config.current_window = ""
+#         config.priority = input("How urgent is this? (low/medium/high)\n")
+#         # if config.char_is_in(':', config.total.lower()):
+#         #     # Interpret as end time relative to current time
+#         config.task_context = input("What's this for? (e.g. class assignment, research, studying, meeting prep)\n")
+#         timer_loop()
+#         from llm import generate_message
+#         generate_message(config.style, config.goal, config.target_window, config.time_remaining, config.priority, config.task_context)
         
-        # if config.char_is_in(':', config.total.lower()):
-        #     # Interpret as end time relative to current time        
 
 def get_open_window_names():
     os_system = platform.system()
@@ -47,14 +65,11 @@ def get_open_window_names():
 def prompt_target_window():
     valid_names = get_open_window_names()
     while True:
-        entered = input("What is your target window?\n").strip()
+        entered = input("What application should you be focused on?\n").strip()
         match = next((n for n in valid_names if n.lower() == entered.lower()), None)
         if match:
             return match
         print(f"'{entered}' isn't currently open. Open windows: {', '.join(valid_names)}")
-
-config.target_window = prompt_target_window()
-config.current_window = ""
 
 print(config.target_window)
 class AppState(Enum):
@@ -123,21 +138,23 @@ def timer_loop():
     # global time_remaining, paused_time_remaining, distracted_timer, state, start_time
     while True:
         # Make sure the two lines below work as intended
-        if elapsed == config.total and config.distracted_timer < config.distraction_time_limit:
-            config.anchor_session_over() # CALL THIS NEW FUNCTION FOR WHEN THEY HAVE A SUCCESSFUL LOCKIN SESSION
-            
         if config.state == AppState.FOCUSED:
             elapsed = time.time() - config.start_time
+            # if elapsed == config.total and config.distracted_timer < config.distraction_time_limit:
+            #     config.anchor_session_over() # CALL THIS NEW FUNCTION FOR WHEN THEY HAVE A SUCCESSFUL LOCKIN SESSION
+            #     break
             if config.paused_time_remaining == None:
                 config.time_remaining = config.total - elapsed
             else:
                 config.time_remaining = config.paused_time_remaining - elapsed
             print(f"timer: {config.time_remaining:.0f}s remaining")
+            print(f"current app: {config.current_window}")
             time.sleep(1)
         elif config.state == AppState.DISTRACTED:
             time.sleep(1)
             config.distracted_timer += 1
             print(f"distracted for {config.distracted_timer}s")
+            print(f"current app: {config.current_window}")
             if config.distracted_timer >= config.distraction_time_limit: # Change to 300 (5 minutes) for production
                 config.state = AppState.ALERT
         elif config.state == AppState.ALERT:
@@ -150,6 +167,8 @@ def timer_loop():
             print("[blurred screen]")
             time.sleep(1)
             print("AI context bridge & brain animation 1")
+            from llm import generate_message
+            generate_message(config.style, config.goal, config.target_window, config.time_remaining, config.priority, config.task_context)
             time.sleep(5) # Change to 15 seconds for production
             print("Task-switching micro-game")
             time.sleep(5) # Change to 15 seconds for production
@@ -171,10 +190,32 @@ def capture_screen():
 
 # Without threading, timer_loop and window_monitor_loop would block each other.
 # Threading lets both run simultaneously in the background.
-t1 = threading.Thread(target=timer_loop, daemon=True)
-t2 = threading.Thread(target=window_monitor_loop, daemon=True)
-t1.start()
-t2.start()
+def start():
+    while True:
+        print("Hello! Welcome to Anchored!")
+        # Are you a first time user? Yes/No?
+        config.goal = input("What are you working on? (e.g. finishing the lit review section)\n")
+        config.total = 60 * float(input("How many minutes do you want to anchor in for?\n"))
+        while config.total < 1500:
+            config.total = 60 * float(input("You need to anchor in for at least 25 minutes.\nHow many minutes do you want to anchor in for?\n"))
+        config.target_window = prompt_target_window()
+        config.current_window = get_active_window()
+        config.priority = input("How urgent is this? (low/medium/high)\n")
+        # if config.char_is_in(':', config.total.lower()):
+        #     # Interpret as end time relative to current time
+        config.task_context = input("What's this for? (e.g. class assignment, research, studying, meeting prep)\n")
+        t1 = threading.Thread(target=timer_loop, daemon=True)
+        t2 = threading.Thread(target=window_monitor_loop, daemon=True)
+        t1.start()
+        t2.start()
+        # from llm import generate_message
+        # generate_message(config.style, config.goal, config.target_window, config.time_remaining, config.priority, config.task_context)
+
+start()
+# t1 = threading.Thread(target=timer_loop, daemon=True)
+# t2 = threading.Thread(target=window_monitor_loop, daemon=True)
+# t1.start()
+# t2.start()
 
 # Keep program alive
 while True:
