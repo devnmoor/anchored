@@ -25,7 +25,7 @@ SYSTEM_MESSAGE = """You are a focus recovery assistant built for people with ADH
 
         You will receive two screenshots and session context: what the user is supposed to be working on, how much time they have left, and which application they should be focused on. The first image shows what the user was doing right before they got distracted. The second image shows what they are currently doing.
 
-        Write exactly 2 sentences. The first sentence restores their working memory — be specific about visible content, not just app names. The second sentence pulls them forward.
+        Write exactly 4 sentences. The first sentence restores their working memory — be specific about visible content, not just app names. The second sentence pulls them forward. The third sentence should show an understanding of the situation and remind the user of their goal and urgency of the task. The fourth sentence should demonstrate a successful interpretation of cause of distraction and a breakdown of the use of the distraction app and what specifically they were looking at based on the distracted.png.
 
         Rules:
 
@@ -37,11 +37,12 @@ SYSTEM_MESSAGE = """You are a focus recovery assistant built for people with ADH
         - Do not ask them to "try harder" or "stay focused" — give them a concrete next action instead"""
         
 PROMPT_STYLES = {
-    "urgency": "Write the second sentence using urgency — make the time remaining feel visceral and immediate.",
-    "specificity": "Write the second sentence by naming exactly where they left off in their work.",
-    "momentum": "Write the second sentence by implying they were close to finishing something — make returning feel like the natural next move.",
-    "social": "Write the second sentence referencing that others in their session are still focused."
+    "urgency": "In the fourth sentence, after naming what specifically they were distracted by, close with urgency — make the time remaining feel visceral and immediate.",
+    "specificity": "In the fourth sentence, after naming what specifically they were distracted by, close by naming exactly where they left off in their work.",
+    "momentum": "In the fourth sentence, after naming what specifically they were distracted by, close by implying they were close to finishing something — make returning feel like the natural next move.",
+    "social": "In the fourth sentence, after naming what specifically they were distracted by, close by referencing that others in their session are still focused."
 }
+
 
 def generate_message(style, goal, target_app, time_remaining, priority, task_context):
     last_focus_b64 = image_to_base64("captures/last_focus.png")
@@ -58,7 +59,7 @@ def generate_message(style, goal, target_app, time_remaining, priority, task_con
     # We are dropping prompt_style_instruction from the user_text and instead are putting it inside "instruction"
     
     instruction = f"""
-    Write the 2-sentence re-orientation message now, following the rules above and using the two provided images.
+    Write the 4-sentence re-orientation message now, following the rules above and using the two provided images and extrapolating a response from the user_text and crafting a message that is understanding of the situation, psychologically informed, re-orients them to where they left off, and motivates them to return to work.
     {prompt_style_instruction}
     """
     
