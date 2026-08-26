@@ -1,16 +1,13 @@
 # main.py
 
-import time
-import platform
 from enum import Enum
 import threading
 import os
-import mss
-from PIL import Image
 import config
-from openai import OpenAI
-from dotenv import load_dotenv
-from llm import generate_message
+import json
+import time
+
+from tracker import get_open_window_names, get_active_window, window_monitor_loop, timer_loop
 
 '''
 These are the things the user needs to provide us first and foremost:
@@ -30,19 +27,6 @@ then it compares the two and asks the user between those two which has higher pr
   but when the queue is NOT empty they are asked to choose is this higher priority then X task or lower priority, and systematically organizes them all into an ordered queue
 '''
 
-def get_open_window_names():
-    os_system = platform.system()
-    if os_system == "Darwin":
-        import subprocess
-        script = 'tell application "System Events" to get name of every process whose background only is false'
-        result = subprocess.run(['osascript', '-e', script], capture_output=True, text=True)
-        return [name.strip() for name in result.stdout.split(",")]
-    elif os_system == "Windows":
-        import pygetwindow as gw
-        return [t for t in gw.getAllTitles() if t.strip()]
-    else:
-        return []
-
 def prompt_target_window():
     valid_names = get_open_window_names()
     while True:
@@ -53,129 +37,13 @@ def prompt_target_window():
         print(f"'{entered}' isn't currently open. Open windows: {', '.join(valid_names)}")
 
 print(config.target_window)
-class AppState(Enum):
-    FOCUSED = "focused"
-    DISTRACTED = "distracted"
-    ALERT = "alert"
 
-config.state = AppState.FOCUSED
-config.total = 10
-config.start_time = time.time()
-config.paused_time_remaining = None
-config.time_remaining = config.total
-config.distracted_timer = 0
-
+#  The line below is a one-time setup call that runs at module load, before start_anchored() and before any thread starts, so captures/ always exists before capture_screen() is ever called.
 os.makedirs("captures", exist_ok=True)
-
-# --- ALL FUNCTIONS DEFINED FIRST ---
-
-def get_active_window_mac():
-    import subprocess
-    script = 'tell application "System Events" to get name of first application process whose frontmost is true'
-    result = subprocess.run(['osascript', '-e', script], capture_output=True, text=True)
-    config.current_window = result.stdout.strip()
-    return result.stdout.strip()
-
-def get_active_window_windows():
-    import pygetwindow as gw
-    try:
-        config.current_window = gw.getActiveWindow().title
-        return gw.getActiveWindow().title
-    except:
-        return None
-
-def get_active_window():
-    os_system = platform.system()
-    if os_system == "Darwin":
-        return get_active_window_mac()
-    elif os_system == "Windows":
-        return get_active_window_windows()
-    else:
-        return None
-
-def window_monitor_loop():
-    # global state, paused_time_remaining, distracted_timer
-    while True:
-        config.current_window = get_active_window()
-        # print(f"active window: {current_window}")
-        if config.state == AppState.ALERT:
-            time.sleep(0.5)
-            continue
-        elif config.current_window == config.target_window:
-            img = capture_screen()
-            img.save("captures/last_focus.png")
-            if config.state == AppState.DISTRACTED:
-                config.distracted_timer = 0
-                config.paused_time_remaining = config.time_remaining
-            config.state = AppState.FOCUSED
-        else:
-            img = capture_screen()
-            img.save("captures/distracted.png")
-            # Captures what they were working on right before getting distracted — only fires once on transition
-            config.state = AppState.DISTRACTED
-        time.sleep(0.5)
-
-def timer_loop():
-    # global time_remaining, paused_time_remaining, distracted_timer, state, start_time
-    while True:
-        # Make sure the two lines below work as intended
-        if config.state == AppState.FOCUSED:
-            elapsed = time.time() - config.start_time
-            # if elapsed == config.total and config.distracted_timer < config.distraction_time_limit:
-            #     config.anchor_session_over() # CALL THIS NEW FUNCTION FOR WHEN THEY HAVE A SUCCESSFUL LOCKIN SESSION
-            #     break
-            if config.paused_time_remaining == None:
-                config.time_remaining = config.total - elapsed
-            else:
-                config.time_remaining = config.paused_time_remaining - elapsed
-            print(f"timer: {config.time_remaining:.0f}s remaining")
-            print(f"current app: {config.current_window}")
-            print(f"paused time remaining: {config.paused_time_remaining}")
-            time.sleep(1)
-        elif config.state == AppState.DISTRACTED:
-            time.sleep(1)
-            config.distracted_timer += 1
-            print(f"distracted for {config.distracted_timer}s")
-            print(f"current app: {config.current_window}")
-            print(f"paused time remaining: {config.paused_time_remaining}")
-            if config.distracted_timer >= config.distraction_time_limit: # Change to 300 (5 minutes) for production
-                config.state = AppState.ALERT
-        elif config.state == AppState.ALERT:
-            print(f"paused time remaining: {config.paused_time_remaining}")
-            # Blur the entire screen
-            # 15 seconds for AI context bridge & emptying brain animation
-            # 15 seconds for task-switching game & filling brain animation
-            config.paused_time_remaining = config.time_remaining
-            config.distracted_timer = 0
-            # Captures what they are currently distracted by when the alert fires
-            print("[blurred screen]")
-            time.sleep(1)
-            print("AI context bridge & brain animation 1")
-            message = generate_message(config.style, config.goal, config.target_window, config.time_remaining, config.priority, config.task_context)
-            print(message)  # replace with UI display later
-            time.sleep(config.ai_bridge_duration)
-            print("Task-switching micro-game")
-            time.sleep(5) # Change to 15 seconds for production
-            config.start_time = time.time()
-            print("--- switched to focused ---")
-            config.state = AppState.FOCUSED
-
-# --- CAPTURE SCREEN FUNCTIONALITY ---
-
-# capture_screen() returns a PIL Image object (essentially an in-memory representation of the screenshot
-# that you can save to disk, convert to base64 to send to an LLM, and resize, crop, or manipulate w/PIL)
-def capture_screen():
-    with mss.MSS() as sct:
-        screenshot = sct.grab(sct.monitors[1])
-        img = Image.frombytes("RGB", screenshot.size, screenshot.rgb)
-        return img
-
-# --- THEN START THREADS ---
 
 # Without threading, timer_loop and window_monitor_loop would block each other.
 # Threading lets both run simultaneously in the background.
 def start_anchored():
-    # while True:
     print("Hello! Welcome to Anchored!")
     # Are you a first time user? Yes/No?
     config.goal = input("What are you working on? (e.g. finishing the lit review section)\n")
@@ -188,6 +56,15 @@ def start_anchored():
     # if config.char_is_in(':', config.total.lower()):
     #     # Interpret as end time relative to current time
     config.task_context = input("What's this for? (e.g. class assignment, research, studying, meeting prep)\n")
+    
+    # SESSION BEGINS HERE
+    config.state = config.AppState.FOCUSED
+    config.start_time = time.time()
+    config.paused_time_remaining = None
+    config.time_remaining = config.total
+    config.distracted_timer = 0
+    config.break_bool = False
+    
     t1 = threading.Thread(target=timer_loop, daemon=True)
     t2 = threading.Thread(target=window_monitor_loop, daemon=True)
     t1.start()
