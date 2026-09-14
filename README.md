@@ -1,8 +1,5 @@
 # Anchored
-Stay anchored to your work. A focus tool for ADHD that monitors your active window, detects distraction, and uses AI to snap you back to exactly where you left off.
-
-# ADHD Focus Tracker — Build Guide
-Anchored is a desktop app for people with ADHD that monitors focus, detects distraction, and uses reinforcement learning to deliver personalized re-orientation messages, getting faster at recovering each user's attention the more they use it. It is really easy to set-up, all the user needs to provide is how long they want to lockin for and their focus application, and through continuous use of the app, the model will learn what other applications are a main source of distraction to the user and the main things they do on those distraction apps that tend to dsitract them.
+Stay **anchored** to your work. A focus tool for ADHD that monitors your active window, detects distraction, and uses AI to snap you back to exactly where you left off. 
 
 The vision for Anchored goes beyond distraction detection.
 
@@ -15,6 +12,9 @@ The deeper opportunity is energy-aware personalization. Distraction isn't random
 The third layer is memory across sessions. Right now most tools reset every session. Anchored is designed to remember — "last time you worked on this, you got stuck at the same point and went off task for 30 minutes" — and use that to anticipate friction before it becomes distraction.
 
 Finally, breaks are a feature, not a failure. The best version of Anchored doesn't punish distraction, it structures recovery. Earned breaks, tracked and timed, make the tool feel like a training partner rather than surveillance software — which is the difference between something people use once and something they build a habit around.
+
+# ADHD Focus Tracker — Build Guide
+Anchored is a desktop app for people with ADHD that monitors focus, detects distraction, and uses reinforcement learning to deliver personalized re-orientation messages, getting faster at recovering each user's attention the more they use it. It is really easy to set-up, all the user needs to provide is how long they want to lockin for and their focus application, and through continuous use of the app, the model will learn what other applications are a main source of distraction to the user and the main things they do on those distraction apps that tend to dsitract them.
 
 ### Core Features
 
